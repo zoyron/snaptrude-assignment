@@ -1,11 +1,12 @@
 import * as THREE from "three";
 
 export class DrawingManager {
-  constructor(scene, camera, planeMesh, controls) {
+  constructor(scene, camera, planeMesh, controls, canvas) {
     this.scene = scene;
     this.camera = camera;
     this.planeMesh = planeMesh;
     this.controls = controls;
+    this.canvas = canvas; // Add this line
     this.shapesGroup = new THREE.Group();
     this.scene.add(this.shapesGroup);
     this.isDrawing = false;
@@ -68,7 +69,7 @@ export class DrawingManager {
    */
 
   setupEventListeners() {
-    canvas.addEventListener("click", (event) => {
+    this.canvas.addEventListener("click", (event) => {
       if (!this.isDrawing) return;
 
       const mouse = new THREE.Vector2(
@@ -77,17 +78,17 @@ export class DrawingManager {
       );
 
       const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(mouse, camera);
+      raycaster.setFromCamera(mouse, this.camera);
 
-      const intersects = raycaster.intersectObject(planeMesh);
+      const intersects = raycaster.intersectObject(this.planeMesh);
       if (intersects.length > 0) {
         const point = intersects[0].point;
         addPoint(point.x, point.y);
       }
     });
 
-    canvas.addEventListener("dblclick", completeShape);
-    canvas.addEventListener("contextmenu", (event) => {
+    this.canvas.addEventListener("dblclick", this.completeShape);
+    this.canvas.addEventListener("contextmenu", (event) => {
       event.preventDefault();
       if (isDrawing) {
         completeShape();
