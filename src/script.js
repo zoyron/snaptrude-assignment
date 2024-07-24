@@ -23,7 +23,7 @@ const scene = new THREE.Scene();
 const planeMesh = new THREE.Mesh(
   new THREE.PlaneGeometry(5, 5, 8, 8),
   new THREE.MeshBasicMaterial({
-    color: "red",
+    color: "#ffffff",
     side: THREE.DoubleSide,
     // wireframe: true,
   })
