@@ -8,7 +8,7 @@ import GUI from "lil-gui";
 const gui = new GUI();
 
 /**
- * Scene, Renderer, Camera
+ * Scene, Renderer, Camera And Lighting
  */
 
 // Canvas
@@ -16,6 +16,9 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+
+// Lighting Ambient
+scene.add(new THREE.AmbientLight(0x404040));
 
 /**
  * Plane
@@ -57,6 +60,7 @@ const shapesGroup = new THREE.Group();
 scene.add(shapesGroup);
 
 // Variables for drawing
+let lastCreatedShape = null;
 let isDrawing = false;
 let drawingPoints = [];
 let currentLine = null;
@@ -143,8 +147,40 @@ function completeShape() {
     shapeMesh.position.z = 0.01; // Slight offset above the plane
 
     shapesGroup.add(shapeMesh);
+    lastCreatedShape = shape;
   }
   exitDrawMode();
+}
+
+/**
+ * Extrusion function
+ */
+function performExtrusion() {
+  if (lastCreatedShape) {
+    const extrusionSettings = {
+      steps: 1,
+      depth: 0.5,
+      bevelEnabled: false,
+    };
+    const extrudeGeometry = new THREE.ExtrudeGeometry(
+      lastCreatedShape,
+      extrusionSettings
+    );
+    const extrudeMaterial = new THREE.MeshBasicMaterial({
+      color: 0x0080ff,
+      opacity: 0.75,
+      side: THREE.DoubleSide,
+      transparent: true,
+    });
+    const extrudeMesh = new THREE.Mesh(extrudeGeometry, extrudeMaterial);
+    extrudeMesh.position.z = 0.4;
+    shapesGroup.add(extrudeMesh);
+    lastCreatedShape = null;
+    updateModeDisplay("Extrude");
+    console.log(shapesGroup);
+  } else {
+    alert("Draw a shape first");
+  }
 }
 
 // Event listeners for mouse interactions
@@ -177,9 +213,11 @@ canvas.addEventListener("contextmenu", (event) => {
 // Add GUI controls
 const drawingControls = {
   startDrawing: enterDrawMode,
+  startExtrusion: performExtrusion,
 };
 
 gui.add(drawingControls, "startDrawing").name("Draw");
+gui.add(drawingControls, "startExtrusion").name("Extrude");
 
 // --------------------------------------------------------------
 
