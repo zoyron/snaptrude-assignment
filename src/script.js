@@ -52,9 +52,6 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, -4, 4);
 scene.add(camera);
 // --------------------------------------------------------------
-/**
- * claude code
- */
 const shapesGroup = new THREE.Group();
 scene.add(shapesGroup);
 
@@ -84,6 +81,13 @@ function exitDrawMode() {
 function addPoint(x, y) {
   const point = new THREE.Vector3(x, y, 0.01); // Slightly above the plane
   drawingPoints.push(point);
+  // add red points while clicking
+  const pointMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.025, 8, 8),
+    new THREE.MeshBasicMaterial({ color: "red" })
+  );
+  pointMesh.position.set(x, y, 0.01);
+  scene.add(pointMesh);
 }
 
 // Function to update the drawing
