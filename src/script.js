@@ -21,7 +21,7 @@ const scene = new THREE.Scene();
  * Plane
  */
 const planeMesh = new THREE.Mesh(
-  new THREE.PlaneGeometry(5, 5, 8, 8),
+  new THREE.PlaneGeometry(7.5, 7.5, 8, 8),
   new THREE.MeshBasicMaterial({
     color: 0xfffffff,
     side: THREE.DoubleSide,
@@ -49,8 +49,9 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(0, -4, 4);
+camera.position.set(0, -5, 5);
 scene.add(camera);
+
 // --------------------------------------------------------------
 const shapesGroup = new THREE.Group();
 scene.add(shapesGroup);
@@ -64,6 +65,7 @@ let currentLine = null;
 function enterDrawMode() {
   isDrawing = true;
   controls.enabled = false; // Disable orbit controls while drawing
+  updateModeDisplay("Draw");
 }
 
 // Function to exit draw mode
@@ -75,6 +77,7 @@ function exitDrawMode() {
     shapesGroup.remove(currentLine);
     currentLine = null;
   }
+  updateModeDisplay("None");
 }
 
 // Function to add a point to the drawing
@@ -91,15 +94,15 @@ function addPoint(x, y) {
 }
 
 // Function to update the drawing
-function updateDrawing() {
-  if (currentLine) {
-    shapesGroup.remove(currentLine);
-  }
-  const geometry = new THREE.BufferGeometry().setFromPoints(drawingPoints);
-  const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
-  currentLine = new THREE.Line(geometry, material);
-  shapesGroup.add(currentLine);
-}
+// function updateDrawing() {
+//   if (currentLine) {
+//     shapesGroup.remove(currentLine);
+//   }
+//   const geometry = new THREE.BufferGeometry().setFromPoints(drawingPoints);
+//   const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+//   currentLine = new THREE.Line(geometry, material);
+//   shapesGroup.add(currentLine);
+// }
 
 // Function to complete the shape
 // function completeShape() {
@@ -179,6 +182,7 @@ const drawingControls = {
 gui.add(drawingControls, "startDrawing").name("Draw");
 
 // --------------------------------------------------------------
+
 /**
  * Renderer and orbital controls
  */
@@ -210,6 +214,14 @@ window.addEventListener("resize", () => {
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
+
+/**
+ * handling button modes
+ */
+function updateModeDisplay(mode) {
+  const displayMode = document.getElementById("mode-display");
+  displayMode.textContent = `Mode: ${mode}`;
+}
 
 /**
  * Animation
