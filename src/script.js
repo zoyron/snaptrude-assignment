@@ -371,15 +371,6 @@ function updateExtrudedObjectGeometry(vertexHelper) {
   geometry.computeBoundingSphere();
 }
 
-// Add this to your GUI controls
-const editingControls = {
-  startVertexEdit: enableVertexEdit,
-  stopVertexEdit: disableVertexEdit,
-};
-
-gui.add(editingControls, "startVertexEdit").name("Start Vertex Edit");
-gui.add(editingControls, "stopVertexEdit").name("Stop Vertex Edit");
-
 /**
  * Gui controls and buttons
  */
@@ -387,6 +378,8 @@ const drawingControls = {
   startDrawing: enterDrawMode,
   startExtrusion: performExtrusion,
   reloadSite: reloadSite,
+  startVertexEdit: enableVertexEdit,
+  stopVertexEdit: disableVertexEdit,
 };
 
 const dragControls = {
@@ -409,6 +402,8 @@ gui
 gui.add(drawingControls, "startDrawing").name("Draw");
 gui.add(drawingControls, "startExtrusion").name("Extrude");
 gui.add(drawingControls, "reloadSite").name("Reset");
+gui.add(drawingControls, "startVertexEdit").name("Start Vertex Edit");
+gui.add(drawingControls, "stopVertexEdit").name("Stop Vertex Edit");
 
 // --------------------------------------------------------------
 
