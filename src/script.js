@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import GUI from "lil-gui";
+import { interleaveAttributes } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 /**
  * Debug
@@ -179,8 +180,6 @@ function performExtrusion() {
     extrudeGroup.add(extrudeMesh);
     lastCreatedShape = null;
     updateModeDisplay("Extrude");
-
-    console.log(shapesGroup);
   } else {
     alert("Draw a shape first");
   }
@@ -213,7 +212,63 @@ canvas.addEventListener("contextmenu", (event) => {
   }
 });
 
-// Add GUI controls
+/**
+ * Mouse movements and object dragging
+ */
+let isDragging = false;
+let selectedObject = null;
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// event listeners for the functions
+function enableDragObjects() {
+  canvas.addEventListener("mousedown", onMouseDown);
+  canvas.addEventListener("mousemove", onMouseMove);
+  canvas.addEventListener("mouseup", onMouseUp);
+}
+
+// mouse movement down function
+function onMouseDown(event) {
+  event.preventDefault();
+
+  // fetching the current co-ordinates of the mouse
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(extrudeGroup.children);
+  if (intersects.length > 0) {
+    isDragging = true;
+    controls.enabled = false;
+    selectedObject = intersects[0].object;
+  }
+}
+
+// mouse move function
+function onMouseMove(event) {
+  if (isDragging && selectedObject) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(planeMesh);
+    if (intersects.length > 0) {
+      selectedObject.position.x = intersects[0].point.x;
+      selectedObject.position.y = intersects[0].point.y;
+    }
+  }
+}
+
+// mouse up function
+function onMouseUp() {
+  isDragging = false;
+  selectedObject = null;
+  controls.enabled = true;
+}
+
+enableDragObjects();
+
+/**
+ * Gui controls and buttons
+ */
 const drawingControls = {
   startDrawing: enterDrawMode,
   startExtrusion: performExtrusion,
