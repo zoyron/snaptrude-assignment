@@ -57,7 +57,9 @@ scene.add(camera);
 
 // --------------------------------------------------------------
 const shapesGroup = new THREE.Group();
+const extrudeGroup = new THREE.Group();
 scene.add(shapesGroup);
+scene.add(extrudeGroup);
 
 // Variables for drawing
 let lastCreatedShape = null;
@@ -174,9 +176,10 @@ function performExtrusion() {
     });
     const extrudeMesh = new THREE.Mesh(extrudeGeometry, extrudeMaterial);
     extrudeMesh.position.z = 0.4;
-    shapesGroup.add(extrudeMesh);
+    extrudeGroup.add(extrudeMesh);
     lastCreatedShape = null;
     updateModeDisplay("Extrude");
+
     console.log(shapesGroup);
   } else {
     alert("Draw a shape first");
@@ -214,10 +217,12 @@ canvas.addEventListener("contextmenu", (event) => {
 const drawingControls = {
   startDrawing: enterDrawMode,
   startExtrusion: performExtrusion,
+  reloadSite: reloadSite,
 };
 
 gui.add(drawingControls, "startDrawing").name("Draw");
 gui.add(drawingControls, "startExtrusion").name("Extrude");
+gui.add(drawingControls, "reloadSite").name("Reset");
 
 // --------------------------------------------------------------
 
@@ -254,11 +259,16 @@ window.addEventListener("resize", () => {
 });
 
 /**
- * handling button modes
+ * handling button modes and reseting
  */
 function updateModeDisplay(mode) {
   const displayMode = document.getElementById("mode-display");
   displayMode.textContent = `Mode: ${mode}`;
+}
+
+// reloading/resetting
+function reloadSite() {
+  window.location.reload();
 }
 
 /**
