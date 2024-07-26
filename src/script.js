@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import GUI from "lil-gui";
-import { interleaveAttributes } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 /**
  * Debug
@@ -238,6 +237,10 @@ function onMouseDown(event) {
   const intersects = raycaster.intersectObjects(extrudeGroup.children);
   if (intersects.length > 0) {
     isDragging = true;
+    /**
+     * the controls will be disabled till we're movin the object
+     * the moment we leave the mouse or trackpad, the orbit controls will be enables
+     */
     controls.enabled = false;
     selectedObject = intersects[0].object;
   }
@@ -265,6 +268,117 @@ function onMouseUp() {
 }
 
 // enableDragObjects();
+
+/**
+ * Vertex edit buttons and functionality
+ */
+let isVertexEditing = false;
+let selectedVertex = null;
+const vertexHelpers = [];
+
+function enableVertexEdit() {
+  isVertexEditing = true;
+  controls.enabled = false;
+  createVertexHelpers();
+  canvas.addEventListener("mousedown", onVertexEditMouseDown);
+  canvas.addEventListener("mousemove", onVertexEditMouseMove);
+  canvas.addEventListener("mouseup", onVertexEditMouseUp);
+  updateModeDisplay("Vertex Edit");
+}
+
+function disableVertexEdit() {
+  isVertexEditing = false;
+  controls.enabled = true;
+  removeVertexHelpers();
+  canvas.removeEventListener("mousedown", onVertexEditMouseDown);
+  canvas.removeEventListener("mousemove", onVertexEditMouseMove);
+  canvas.removeEventListener("mouseup", onVertexEditMouseUp);
+  updateModeDisplay("None");
+}
+
+function createVertexHelpers() {
+  removeVertexHelpers();
+  extrudeGroup.children.forEach((object) => {
+    const geometry = object.geometry;
+    const positions = geometry.attributes.position.array;
+    for (let i = 0; i < positions.length; i += 3) {
+      const vertexGeometry = new THREE.SphereGeometry(0.05, 32, 32);
+      const vertexMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      const vertexHelper = new THREE.Mesh(vertexGeometry, vertexMaterial);
+      vertexHelper.position.set(
+        positions[i] + object.position.x,
+        positions[i + 1] + object.position.y,
+        positions[i + 2] + object.position.z
+      );
+      vertexHelper.userData.index = i;
+      vertexHelper.userData.parent = object;
+      scene.add(vertexHelper);
+      vertexHelpers.push(vertexHelper);
+    }
+  });
+}
+
+function removeVertexHelpers() {
+  vertexHelpers.forEach((helper) => scene.remove(helper));
+  vertexHelpers.length = 0;
+}
+
+function onVertexEditMouseDown(event) {
+  event.preventDefault();
+
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(vertexHelpers);
+
+  if (intersects.length > 0) {
+    selectedVertex = intersects[0].object;
+  }
+}
+
+function onVertexEditMouseMove(event) {
+  if (selectedVertex) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(planeMesh);
+
+    if (intersects.length > 0) {
+      selectedVertex.position.x = intersects[0].point.x;
+      selectedVertex.position.y = intersects[0].point.y;
+      updateExtrudedObjectGeometry(selectedVertex);
+    }
+  }
+}
+
+function onVertexEditMouseUp() {
+  selectedVertex = null;
+}
+
+function updateExtrudedObjectGeometry(vertexHelper) {
+  const object = vertexHelper.userData.parent;
+  const geometry = object.geometry;
+  const positions = geometry.attributes.position.array;
+  const index = vertexHelper.userData.index;
+
+  positions[index] = vertexHelper.position.x - object.position.x;
+  positions[index + 1] = vertexHelper.position.y - object.position.y;
+
+  geometry.attributes.position.needsUpdate = true;
+  geometry.computeVertexNormals();
+  geometry.computeBoundingSphere();
+}
+
+// Add this to your GUI controls
+const editingControls = {
+  startVertexEdit: enableVertexEdit,
+  stopVertexEdit: disableVertexEdit,
+};
+
+gui.add(editingControls, "startVertexEdit").name("Start Vertex Edit");
+gui.add(editingControls, "stopVertexEdit").name("Stop Vertex Edit");
 
 /**
  * Gui controls and buttons
