@@ -264,7 +264,7 @@ function onMouseUp() {
   controls.enabled = true;
 }
 
-enableDragObjects();
+// enableDragObjects();
 
 /**
  * Gui controls and buttons
@@ -275,6 +275,23 @@ const drawingControls = {
   reloadSite: reloadSite,
 };
 
+const dragControls = {
+  enableDrag: false,
+};
+
+gui
+  .add(dragControls, "enableDrag")
+  .name("Move Object")
+  .onChange((value) => {
+    if (value) {
+      enableDragObjects();
+    } else {
+      // Remove event listeners if drag is disabled
+      canvas.removeEventListener("mousedown", onMouseDown);
+      canvas.removeEventListener("mousemove", onMouseMove);
+      canvas.removeEventListener("mouseup", onMouseUp);
+    }
+  });
 gui.add(drawingControls, "startDrawing").name("Draw");
 gui.add(drawingControls, "startExtrusion").name("Extrude");
 gui.add(drawingControls, "reloadSite").name("Reset");
