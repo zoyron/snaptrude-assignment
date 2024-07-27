@@ -3,24 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snaptrude assignment</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <canvas class="webgl"></canvas>
-    <div
-      id="mode-display"
-      style="
+    <title>Three.js Project</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      canvas {
+        display: block;
+      }
+      #mode-display {
         position: absolute;
         top: 10px;
         left: 10px;
         color: white;
-        font-family: Arial;
-        font-size: 16px;
-      "
-    >
-      Mode: None
-    </div>
-    <script type="module" src="./script.js"></script>
+        font-family: Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas class="webgl"></canvas>
+    <div id="mode-display">Mode: None</div>
+    <script type="module" src="main.js"></script>
   </body>
 </html>
