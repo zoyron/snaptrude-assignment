@@ -28,6 +28,8 @@ npm run dev
 
 ### 1. Drawing a 2D shape
 
+> Note: After setting all the dots, Double-Click or Right-Click to completely draw the shape on the canvas
+
 ![2d shape](./static/2Dshape.gif)
 
 ### 2. Extruding a shape into 3D
