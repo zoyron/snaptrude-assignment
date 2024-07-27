@@ -1,5 +1,7 @@
 # Snaptrude Assignment
 
+See deployed project [here](https://snaptrude-task.vercel.app/)
+
 ## Setup
 
 Ensure that node is installed in your system.
@@ -79,3 +81,15 @@ npm run dev
 
 - Three.js: 3D graphics library
 - lil-gui: For creating the graphical user interface
+
+## Approach
+
+Used the following example as references for creating the vertices:
+
+- https://threejs.org/examples/#webgl_geometry_convex
+
+Used the following example as reference for extrusion of geometry:
+
+- https://threejs.org/docs/index.html?q=extr#api/en/geometries/ExtrudeGeometry
+
+And obvioulsy, the threejs documentation and community forum.
