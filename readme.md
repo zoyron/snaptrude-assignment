@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-### Key Features
+## Key Features
 
 - **Draw Mode**: Click to add points, double-click or right-click to complete the shape.
 - **Extrude**: Convert the last drawn 2D shape into a 3D object.
@@ -24,18 +24,21 @@ npm run dev
 
 ## Demo / Usage Examples
 
-1. Drawing a 2D shape
+### 1. Drawing a 2D shape
 
-   ![2d shape](./static/2Dshape.gif)
+![2d shape](./static/2Dshape.gif)
 
-2. Extruding a shape into 3D
-   ![extrision](./static/extrusion.gif)
+### 2. Extruding a shape into 3D
 
-3. Moving the 3D object
-   ![moveObject](./static/moveObject.gif)
+![extrision](./static/extrusion.gif)
 
-4. Editing vertices
-   > Note: Make sure the "Move Object" checkmark is ticked OFF during vertex edit mode
+### 3. Moving the 3D object
+
+![moveObject](./static/moveObject.gif)
+
+### 4. Editing vertices
+
+> Note: Make sure the "Move Object" checkmark is ticked OFF during vertex edit mode
 
 ![vertexEdit](./static/vertexEdit.gif)
 
@@ -71,3 +74,8 @@ npm run dev
 - `vertexEdit.js`: Provides functionality for editing individual vertices of 3D objects.
 - `gui.js`: Sets up the user interface controls using lil-gui.
 - `utils.js`: Contains utility functions used across the application.
+
+## Dependencies
+
+- Three.js: 3D graphics library
+- lil-gui: For creating the graphical user interface
